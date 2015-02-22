@@ -276,7 +276,7 @@ static void __ref intelli_plug_work_fn(struct work_struct *work)
 			case 1:
 				if (persist_count == 0) {
 					//take down everyone
-					unplug_cpu(0);
+					unplug_cpu(1);
 				}
 #ifdef DEBUG_INTELLI_PLUG
 				pr_info("case 1: %u\n", persist_count);
