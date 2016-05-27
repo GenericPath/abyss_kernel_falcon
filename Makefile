@@ -382,7 +382,7 @@ KBUILD_CPPFLAGS := -D__KERNEL__
 YOSHI_FLAGS	:= -pipe -munaligned-access -mfloat-abi=softfp -mvectorize-with-neon-quad -mfpu=neon-vfpv4 \
 		   -fmodulo-sched -fmodulo-sched-allow-regmoves \
 		   -funswitch-loops -fpredictive-commoning -fgcse-after-reload \
-		   -fno-pic -Wno-unused -Wno-maybe-uninitialized -fno-android \
+		   -fno-pic -Wno-unused -Wno-maybe-uninitialized -mno-android \
 		   --param l1-cache-size=16 --param l1-cache-line-size=16 --param l2-cache-size=2048
 
 KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
