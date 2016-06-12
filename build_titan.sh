@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Egg-CAF Titan build script
+# abyss-caf Titan build script
 #
 clear
 
@@ -8,11 +8,11 @@ MODE="$1"
 if [ ! -z $MODE ]; then
     if [ "$MODE" == "r" ]; then
         echo "This is a stable release build!"
-        export LOCALVERSION="-Egg-Stable"
+        export LOCALVERSION="-Abyss-Stable"
     fi
 else
     echo "This is a nightly build!"
-    export LOCALVERSION="-Egg-Nightly"
+    export LOCALVERSION="-Abyss-Nightly"
 fi
 
 # Resources
@@ -65,17 +65,17 @@ function make_zip {
 		cd $ANYKERNEL_DIR
         if [ ! -z $MODE ]; then
             if [ "$MODE" == "r" ]; then
-	            zip -r9 egg-caf-$DEVICE-stable-$VARIANT.zip *
-	            mv egg-caf-$DEVICE-stable-$VARIANT.zip $ZIP_MOVE_STABLE
+	            zip -r9 abyss-caf-$DEVICE-stable-$VARIANT.zip *
+	            mv abyss-caf-$DEVICE-stable-$VARIANT.zip $ZIP_MOVE_STABLE
             fi
 		else
-		    zip -r9 egg-caf-$DEVICE-nightly-$VARIANT.zip *
-		    mv egg-caf-$DEVICE-nightly-$VARIANT.zip $ZIP_MOVE_NIGHTLY
+		    zip -r9 abyss-caf-$DEVICE-nightly-$VARIANT.zip *
+		    mv abyss-caf-$DEVICE-nightly-$VARIANT.zip $ZIP_MOVE_NIGHTLY
 		fi
 		cd $KERNEL_DIR
 }
 
-echo "Egg Kernel Creation Script:"
+echo "Abyss Kernel Creation Script:"
 
 while read -p "Do you want to clean stuffs (y/n)? " cchoice
 do
