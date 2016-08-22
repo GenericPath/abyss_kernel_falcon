@@ -16,7 +16,7 @@ else
 fi
 
 # Resources
-THREAD="-j2"
+THREAD="-j4"
 KERNEL="zImage"
 DTBIMAGE="dtb"
 DEFCONFIG="falcon_defconfig"
