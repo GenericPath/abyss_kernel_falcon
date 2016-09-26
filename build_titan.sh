@@ -26,8 +26,7 @@ DEVICE="titan"
 VARIANT=$(date +"%Y%m%d")
 export ARCH=arm
 export SUBARCH=arm
-# export CROSS_COMPILE=${HOME}/LinaroXUber4.9/bin/arm-eabi-
-export CROSS_COMPILE=${HOME}/linaro/bin/arm-cortex_a7-linux-gnueabihf-
+export CROSS_COMPILE=${HOME}/toolchains/arm-cortex_a7-linux-android-4.x-kernel-linaro/bin/arm-cortex_a7-linux-gnueabihf-
 
 # Paths
 KERNEL_DIR="${HOME}/kernel/falcon"
