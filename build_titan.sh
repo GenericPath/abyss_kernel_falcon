@@ -1,19 +1,8 @@
 #!/bin/bash
 #
-# abyss-caf Titan build script
+# abyss kernel falcon build script
 #
 clear
-
-MODE="$1"
-if [ ! -z $MODE ]; then
-    if [ "$MODE" == "r" ]; then
-        echo "This is a stable release build!"
-        export LOCALVERSION="-Abyss-Stable"
-    fi
-else
-    echo "This is a nightly build!"
-    export LOCALVERSION="-Abyss-Nightly"
-fi
 
 # Resources
 THREAD="-j4"
@@ -23,7 +12,6 @@ DEFCONFIG="titan_defconfig"
 DEVICE="titan"
 
 # Kernel Details
-VARIANT=$(date +"%Y%m%d")
 export ARCH=arm
 export SUBARCH=arm
 export CROSS_COMPILE=${HOME}/toolchains/arm-cortex_a7-linux-android-4.x-kernel-linaro/bin/arm-cortex_a7-linux-gnueabihf-
@@ -34,6 +22,7 @@ ANYKERNEL_DIR="${HOME}/kernel/anykernel"
 ZIP_MOVE_STABLE="${HOME}/kernel/out/$DEVICE/stable"
 ZIP_MOVE_NIGHTLY="${HOME}/kernel/out/$DEVICE/nightly"
 ZIMAGE_DIR="$KERNEL_DIR/arch/arm/boot"
+KERNEL_VER=$( grep -r "EXTRAVERSION = -Abyss-" ${KERNEL_DIR}/Makefile | sed 's/EXTRAVERSION = -Abyss-//' )
 
 # Functions
 function clean_all {
@@ -50,9 +39,9 @@ function make_kernel {
 		echo
 		make $DEFCONFIG
 		make CONFIG_DEBUG_SECTION_MISMATCH=y $THREAD
-        cd $ANYKERNEL_DIR
-        git checkout falcon
-        cd $KERNEL_DIR
+		cd $ANYKERNEL_DIR
+		git checkout falcon
+		cd $KERNEL_DIR
 }
 
 function make_dtb {
@@ -62,19 +51,21 @@ function make_dtb {
 function make_zip {
 		cp -vr $ZIMAGE_DIR/$KERNEL $ANYKERNEL_DIR
 		cd $ANYKERNEL_DIR
-        if [ ! -z $MODE ]; then
-            if [ "$MODE" == "r" ]; then
-	            zip -r9 abyss-caf-$DEVICE-stable-$VARIANT.zip *
-	            mv abyss-caf-$DEVICE-stable-$VARIANT.zip $ZIP_MOVE_STABLE
-            fi
-		else
-		    zip -r9 abyss-caf-$DEVICE-nightly-$VARIANT.zip *
-		    mv abyss-caf-$DEVICE-nightly-$VARIANT.zip $ZIP_MOVE_NIGHTLY
-		fi
+		zip -r9 abyss-kernel-$DEVICE-$KERNEL_VER.zip *
+		mv abyss-kernel-$DEVICE-$KERNEL_VER.zip $ZIP_MOVE_NIGHTLY
 		cd $KERNEL_DIR
 }
 
-echo "Abyss Kernel Creation Script:"
+echo "    ___    __                                            ";
+echo "   /   |  / /_  __  ____________                         ";
+echo "  / /| | / __ \/ / / / ___/ ___/                         ";
+echo " / ___ |/ /_/ / /_/ (__  |__  )                          ";
+echo "/_/  |_/_.___/\__, /____/____/_ __                     __";
+echo "             /____/         / //_/__  _________  ___  / /";
+echo "                           / ,< / _ \/ ___/ __ \/ _ \/ / ";
+echo "                          / /| /  __/ /  / / / /  __/ /  ";
+echo "                         /_/ |_\___/_/  /_/ /_/\___/_/   ";
+echo "                                                         ";
 
 while read -p "Do you want to clean stuffs (y/n)? " cchoice
 do
