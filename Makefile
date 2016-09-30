@@ -1,7 +1,7 @@
 VERSION = 3
 PATCHLEVEL = 4
 SUBLEVEL = 42
-EXTRAVERSION = -Abyss-1.00
+EXTRAVERSION = -Abyss-1.01
 NAME = Saber-toothed Squirrel
 
 # *DOCUMENTATION*
@@ -350,14 +350,9 @@ KALLSYMS	= scripts/kallsyms
 PERL		= perl
 CHECK		= sparse
 
-# Try to always use GNU ld
-ifneq ($(wildcard $(CROSS_COMPILE)ld.bfd),)
-LD		= $(CROSS_COMPILE)ld.bfd
-endif
-
 # Use the wrapper for the compiler.  This wrapper scans for new
 # warnings and causes the build to stop upon encountering them.
-CC             = $(srctree)/scripts/gcc-wrapper.py $(REAL_CC)
+CC		= $(srctree)/scripts/gcc-wrapper.py $(REAL_CC)
 
 CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
 		  -Wbitwise -Wno-return-void $(CF)
@@ -378,22 +373,14 @@ LINUXINCLUDE    := -I$(srctree)/arch/$(hdr-arch)/include \
 
 KBUILD_CPPFLAGS := -D__KERNEL__
 
-# kwoktopus's Optimizations
-ABYSS_FLAGS	:= -pipe -munaligned-access -mvectorize-with-neon-quad -mfloat-abi=softfp -mfpu=neon-vfpv4 \
-		   -fmodulo-sched -fmodulo-sched-allow-regmoves -fsingle-precision-constant \
-		   -funswitch-loops -fpredictive-commoning -fgcse-after-reload \
-		   -fno-pic -Wno-unused -Wno-maybe-uninitialized -mno-android \
-		   --param l1-cache-size=16 --param l1-cache-line-size=16 --param l2-cache-size=2048
-
 KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -fno-strict-aliasing -fno-common \
 		   -Werror-implicit-function-declaration \
 		   -Wno-format-security -Wno-sizeof-pointer-memaccess \
-		   -fno-delete-null-pointer-checks \
-		   $(ABYSS_FLAGS)
+		   -fno-delete-null-pointer-checks
 KBUILD_AFLAGS_KERNEL :=
 KBUILD_CFLAGS_KERNEL :=
-KBUILD_AFLAGS   := -D__ASSEMBLY__ $(ABYSS_FLAGS)
+KBUILD_AFLAGS   := -D__ASSEMBLY__
 KBUILD_AFLAGS_MODULE  := -DMODULE
 KBUILD_CFLAGS_MODULE  := -DMODULE
 KBUILD_LDFLAGS_MODULE := -T $(srctree)/scripts/module-common.lds
@@ -583,7 +570,7 @@ all: vmlinux
 ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
 KBUILD_CFLAGS	+= -Os $(call cc-disable-warning,maybe-uninitialized,)
 else
-KBUILD_CFLAGS	+= -O3 -Wno-array-bounds -Wno-shift-overflow -Wno-maybe-uninitialized
+KBUILD_CFLAGS	+= -O2
 endif
 
 # conserve stack if available
