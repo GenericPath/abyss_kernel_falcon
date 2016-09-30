@@ -250,8 +250,8 @@ CONFIG_SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
 
 HOSTCC       = gcc
 HOSTCXX      = g++
-HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -O3 -fomit-frame-pointer -std=gnu89
-HOSTCXXFLAGS = -O3
+HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer
+HOSTCXXFLAGS = -O2
 
 # Decide whether to build built-in, modular, or both.
 # Normally, just do built-in.
@@ -335,7 +335,7 @@ include $(srctree)/scripts/Kbuild.include
 
 AS		= $(CROSS_COMPILE)as
 LD		= $(CROSS_COMPILE)ld
-CC		= $(CROSS_COMPILE)gcc
+REAL_CC		= $(CROSS_COMPILE)gcc
 CPP		= $(CC) -E
 AR		= $(CROSS_COMPILE)ar
 NM		= $(CROSS_COMPILE)nm
@@ -355,21 +355,17 @@ ifneq ($(wildcard $(CROSS_COMPILE)ld.bfd),)
 LD		= $(CROSS_COMPILE)ld.bfd
 endif
 
-# kwoktopus's Optimizations
-ABYSS_FLAGS	:= -O3 -g0 -pipe -DNDEBUG -fsched-spec-load \
-		   -munaligned-access -fivopts -mfpu=neon-vfpv4 \
-		   -fmodulo-sched -fmodulo-sched-allow-regmoves -fsingle-precision-constant \
-		   -fpredictive-commoning -fgcse-after-reload -fomit-frame-pointer -fgcse-sm \
-		   -fno-pic -Wno-unused -Wno-maybe-uninitialized -mno-android -Wno-array-bounds -Wno-shift-overflow \
-		   --param l1-cache-size=16 --param l1-cache-line-size=16 --param l2-cache-size=2048
+# Use the wrapper for the compiler.  This wrapper scans for new
+# warnings and causes the build to stop upon encountering them.
+CC             = $(srctree)/scripts/gcc-wrapper.py $(REAL_CC)
 
 CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
 		  -Wbitwise -Wno-return-void $(CF)
-CFLAGS_MODULE   = -DMODULE $(ABYSS_FLAGS)
-AFLAGS_MODULE   = -DMODULE $(ABYSS_FLAGS)
-LDFLAGS_MODULE  = -T $(srctree)/scripts/module-common.lds
-CFLAGS_KERNEL	= $(ABYSS_FLAGS)
-AFLAGS_KERNEL	= $(ABYSS_FLAGS)
+CFLAGS_MODULE   =
+AFLAGS_MODULE   =
+LDFLAGS_MODULE  =
+CFLAGS_KERNEL	=
+AFLAGS_KERNEL	=
 CFLAGS_GCOV	= -fprofile-arcs -ftest-coverage
 
 
@@ -382,19 +378,24 @@ LINUXINCLUDE    := -I$(srctree)/arch/$(hdr-arch)/include \
 
 KBUILD_CPPFLAGS := -D__KERNEL__
 
+# kwoktopus's Optimizations
+ABYSS_FLAGS	:= -pipe -munaligned-access -mvectorize-with-neon-quad -mfloat-abi=softfp -mfpu=neon-vfpv4 \
+		   -fmodulo-sched -fmodulo-sched-allow-regmoves -fsingle-precision-constant \
+		   -funswitch-loops -fpredictive-commoning -fgcse-after-reload \
+		   -fno-pic -Wno-unused -Wno-maybe-uninitialized -mno-android \
+		   --param l1-cache-size=16 --param l1-cache-line-size=16 --param l2-cache-size=2048
+
 KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -fno-strict-aliasing -fno-common \
 		   -Werror-implicit-function-declaration \
 		   -Wno-format-security -Wno-sizeof-pointer-memaccess \
 		   -fno-delete-null-pointer-checks \
-		   -std=gnu89 \
 		   $(ABYSS_FLAGS)
-
-KBUILD_AFLAGS_KERNEL := $(ABYSS_FLAGS)
-KBUILD_CFLAGS_KERNEL := $(ABYSS_FLAGS)
+KBUILD_AFLAGS_KERNEL :=
+KBUILD_CFLAGS_KERNEL :=
 KBUILD_AFLAGS   := -D__ASSEMBLY__ $(ABYSS_FLAGS)
-KBUILD_AFLAGS_MODULE  := -DMODULE $(ABYSS_FLAGS)
-KBUILD_CFLAGS_MODULE  := -DMODULE $(ABYSS_FLAGS)
+KBUILD_AFLAGS_MODULE  := -DMODULE
+KBUILD_CFLAGS_MODULE  := -DMODULE
 KBUILD_LDFLAGS_MODULE := -T $(srctree)/scripts/module-common.lds
 
 # Read KERNELRELEASE from include/config/kernel.release (if it exists)
@@ -581,9 +582,8 @@ all: vmlinux
 
 ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
 KBUILD_CFLAGS	+= -Os $(call cc-disable-warning,maybe-uninitialized,)
-# O3 flag is called earlier
-# else
-# KBUILD_CFLAGS	+= -O2
+else
+KBUILD_CFLAGS	+= -O3 -Wno-array-bounds -Wno-shift-overflow -Wno-maybe-uninitialized
 endif
 
 # conserve stack if available
