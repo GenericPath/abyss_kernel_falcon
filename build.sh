@@ -19,7 +19,6 @@ export CROSS_COMPILE=${HOME}/toolchains/arm-cortex_a7-linux-android-4.x-kernel-l
 # Paths
 KERNEL_DIR="${HOME}/kernel/falcon"
 ANYKERNEL_DIR="${HOME}/kernel/anykernel"
-ZIP_MOVE_STABLE="${HOME}/kernel/out/$DEVICE/stable"
 ZIP_MOVE_NIGHTLY="${HOME}/kernel/out/$DEVICE/nightly"
 ZIMAGE_DIR="$KERNEL_DIR/arch/arm/boot"
 KERNEL_VER=$( grep -r "EXTRAVERSION = -Abyss-" ${KERNEL_DIR}/Makefile | sed 's/EXTRAVERSION = -Abyss-//' )
