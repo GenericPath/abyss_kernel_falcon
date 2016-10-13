@@ -14,7 +14,8 @@ DEVICE="falcon"
 # Kernel Details
 export ARCH=arm
 export SUBARCH=arm
-export CROSS_COMPILE=${HOME}/toolchains/arm-cortex_a7-linux-android-4.x-kernel-linaro/bin/arm-cortex_a7-linux-gnueabihf-
+export CROSS_COMPILE=${HOME}/aosp/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/bin/arm-linux-androideabi-
+#export CROSS_COMPILE=${HOME}/toolchains/arm-cortex_a7-linux-android-4.x-kernel-linaro/bin/arm-cortex_a7-linux-gnueabihf-
 
 # Paths
 KERNEL_DIR="${HOME}/kernel/falcon"
